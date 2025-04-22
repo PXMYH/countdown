@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown to May 1, 2025</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #fff;
+        }
+        
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+        }
+        
+        .countdown {
+            font-size: 5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+        
+        .units {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        
+        .unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .number {
+            font-size: 5rem;
+            font-weight: bold;
+            min-width: 8rem;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+        
+        .label {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+        
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(10px, 10px);
+            }
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+        
+        .date-info {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="container">
+        <h1>Countdown to May 1st</h1>
+        <div class="units">
+            <div class="unit">
+                <div class="number" id="days">00</div>
+                <div class="label">Days</div>
+            </div>
+            <div class="unit">
+                <div class="number" id="hours">00</div>
+                <div class="label">Hours</div>
+            </div>
+            <div class="unit">
+                <div class="number" id="minutes">00</div>
+                <div class="label">Minutes</div>
+            </div>
+            <div class="unit">
+                <div class="number" id="seconds">00</div>
+                <div class="label">Seconds</div>
+            </div>
+        </div>
+        <div class="date-info">May 1, 2025 • 23:59:59 CDT</div>
+    </div>
+
+    <script>
+        // Create stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numStars = 200;
+            
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random position
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 3;
+                
+                // Random opacity
+                const opacity = Math.random() * 0.7 + 0.3;
+                
+                // Apply styles
+                star.style.left = `${left}%`;
+                star.style.top = `${top}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.opacity = opacity;
+                
+                // Random animation duration
+                const animDuration = Math.random() * 5 + 3;
+                star.style.animation = `float ${animDuration}s ease-in-out infinite`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // Calculate and display the countdown
+        function updateCountdown() {
+            const targetDate = new Date('May 1, 2025 23:59:59 CDT').getTime();
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+            
+            // If the countdown is over
+            if (difference < 0) {
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                return;
+            }
+            
+            // Calculate time units
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            
+            // Add leading zeros
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+        
+        // Initialize
+        createStars();
+        updateCountdown(); // Initial call
+        setInterval(updateCountdown, 1000); // Update every second
+    </script>
+</body>
+</html>
