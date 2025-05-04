@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown to May 1, 2025</title>
+    <title>Countdown to Next Month</title>
     <style>
         body {
             margin: 0;
@@ -100,7 +100,7 @@
 <body>
     <div class="stars" id="stars"></div>
     <div class="container">
-        <h1>Countdown to May 1st</h1>
+        <h1 id="countdown-title">Countdown to Next Month</h1>
         <div class="units">
             <div class="unit">
                 <div class="number" id="days">00</div>
@@ -119,10 +119,42 @@
                 <div class="label">Seconds</div>
             </div>
         </div>
-        <div class="date-info">May 1, 2025 • 23:59:59 CDT</div>
+        <div class="date-info" id="target-date-display"></div>
     </div>
 
     <script>
+        // Get the first day of the next month
+        function getFirstDayOfNextMonth() {
+            const now = new Date();
+            // Create a new date for the first day of the next month
+            // Month is 0-indexed, so current month + 1 = next month
+            return new Date(now.getFullYear(), now.getMonth() + 1, 1, 23, 59, 59);
+        }
+        
+        // Format date to display
+        function formatDate(date) {
+            const months = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            
+            const year = date.getFullYear();
+            const month = months[date.getMonth()];
+            const day = date.getDate();
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            
+            // Get timezone abbreviation (simplified version)
+            const timezoneOffset = date.getTimezoneOffset();
+            const timezoneAbbr = Intl.DateTimeFormat().resolvedOptions().timeZone || 
+                                 (timezoneOffset === 0 ? 'UTC' : 
+                                 timezoneOffset > 0 ? 'UTC-' + (timezoneOffset / 60) : 
+                                 'UTC+' + (Math.abs(timezoneOffset) / 60));
+            
+            return `${month} ${day}, ${year} • ${hours}:${minutes}:${seconds} ${timezoneAbbr}`;
+        }
+        
         // Create stars
         function createStars() {
             const starsContainer = document.getElementById('stars');
@@ -160,11 +192,11 @@
         
         // Calculate and display the countdown
         function updateCountdown() {
-            const targetDate = new Date('May 1, 2025 23:59:59 CDT').getTime();
+            const targetDate = getFirstDayOfNextMonth().getTime();
             const now = new Date().getTime();
             const difference = targetDate - now;
             
-            // If the countdown is over
+            // If the countdown is over (should not happen with dynamic target)
             if (difference < 0) {
                 document.getElementById('days').textContent = '00';
                 document.getElementById('hours').textContent = '00';
@@ -186,8 +218,29 @@
             document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
         }
         
+        // Update the page title with the next month
+        function updatePageTitle() {
+            const targetDate = getFirstDayOfNextMonth();
+            const months = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            
+            // Update the main heading
+            document.getElementById('countdown-title').textContent = 
+                `Countdown to ${months[targetDate.getMonth()]} 1st`;
+                
+            // Update the date display
+            document.getElementById('target-date-display').textContent = 
+                formatDate(targetDate);
+                
+            // Update page title
+            document.title = `Countdown to ${months[targetDate.getMonth()]} 1, ${targetDate.getFullYear()}`;
+        }
+        
         // Initialize
         createStars();
+        updatePageTitle();
         updateCountdown(); // Initial call
         setInterval(updateCountdown, 1000); // Update every second
     </script>
